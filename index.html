@@ -90,6 +90,11 @@
     <!-- INPUT DE BÚSQUEDA -->
     <input type="text" id="searchInput" placeholder="Escribe algo... (ej: java, python, react)">
     
+    <!-- RESULTADOS (ahora debajo del buscador) -->
+    <div id="results">
+        <div class="no-results">💡 Empieza a escribir para ver la magia reactiva</div>
+    </div>
+    
     <!-- SECCIÓN 1: OBSERVABLE -->
     <div class="concept-section">
         <div class="concept-title">📡 1. OBSERVABLE (Líneas 80-95)</div>
@@ -124,11 +129,6 @@
             })
         </div>
         <div id="observer-debug" class="debug">Observer esperando datos...</div>
-    </div>
-    
-    <!-- RESULTADOS -->
-    <div id="results">
-        <div class="no-results">💡 Empieza a escribir para ver la magia reactiva</div>
     </div>
 
     <!-- RXJS desde CDN -->
