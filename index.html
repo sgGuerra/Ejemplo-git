@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Buscador Reactivo ULTRA SIMPLE</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            max-width: 600px; 
+            margin: 50px auto; 
+            padding: 20px; 
+            background: #f0f8ff;
+        }
+        
+        h1 { 
+            text-align: center; 
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+        
+        input { 
+            width: 100%; 
+            padding: 15px; 
+            font-size: 16px; 
+            border: 2px solid #3498db; 
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .concept-section {
+            background: white;
+            border-left: 4px solid #e74c3c;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .concept-title {
+            font-weight: bold;
+            color: #e74c3c;
+            font-size: 14px;
+            margin-bottom: 8px;
+        }
+        
+        .code-highlight {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 5px 0;
+            font-size: 12px;
+        }
+        
+        .debug {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        
+        .suggestion {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .suggestion:hover {
+            background: #e3f2fd;
+        }
+        
+        .no-results {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔍 Buscador Reactivo ULTRA SIMPLE</h1>
+    <p style="text-align: center; color: #666;">Versión mínima para entender Observables, Observers y Pipes</p>
+    
+    <!-- INPUT DE BÚSQUEDA -->
+    <input type="text" id="searchInput" placeholder="Escribe algo... (ej: java, python, react)">
+    
+    <!-- SECCIÓN 1: OBSERVABLE -->
+    <div class="concept-section">
+        <div class="concept-title">📡 1. OBSERVABLE (Líneas 80-95)</div>
+        <p>Observa los cambios en el input y los convierte en un "stream" de datos</p>
+        <div class="code-highlight">
+            fromEvent(input, 'input') // ← Este es el OBSERVABLE
+        </div>
+        <div id="observable-debug" class="debug">Esperando eventos del input...</div>
+    </div>
+    
+    <!-- SECCIÓN 2: PIPES/OPERADORES -->
+    <div class="concept-section">
+        <div class="concept-title">🔧 2. PIPES/OPERADORES (Líneas 100-110)</div>
+        <p>Transforman y filtran los datos que fluyen por el stream</p>
+        <div class="code-highlight">
+            .pipe(<br>
+            &nbsp;&nbsp;debounceTime(300), // ← PIPE 1: Espera 300ms<br>
+            &nbsp;&nbsp;filter(...),      // ← PIPE 2: Filtra texto corto<br>
+            &nbsp;&nbsp;map(...)          // ← PIPE 3: Busca sugerencias<br>
+            )
+        </div>
+        <div id="pipes-debug" class="debug">Pipes inactivos...</div>
+    </div>
+    
+    <!-- SECCIÓN 3: OBSERVER -->
+    <div class="concept-section">
+        <div class="concept-title">👁️ 3. OBSERVER (Líneas 115-125)</div>
+        <p>Recibe los datos finales y actualiza la interfaz</p>
+        <div class="code-highlight">
+            .subscribe({ // ← Este es el OBSERVER<br>
+            &nbsp;&nbsp;next: (data) => mostrarResultados(data)<br>
+            })
+        </div>
+        <div id="observer-debug" class="debug">Observer esperando datos...</div>
+    </div>
+    
+    <!-- RESULTADOS -->
+    <div id="results">
+        <div class="no-results">💡 Empieza a escribir para ver la magia reactiva</div>
+    </div>
+
+    <!-- RXJS desde CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js"></script>
+    
+    <script>
+        // ============================================
+        // 📊 DATOS DE EJEMPLO (súper simple)
+        // ============================================
+        const datos = [
+            'JavaScript',
+            'Java',
+            'Python', 
+            'React',
+            'Vue.js',
+            'Angular',
+            'Node.js',
+            'HTML',
+            'CSS'
+        ];
+        
+        // Referencias a elementos HTML
+        const input = document.getElementById('searchInput');
+        const observableDebug = document.getElementById('observable-debug');
+        const pipesDebug = document.getElementById('pipes-debug');
+        const observerDebug = document.getElementById('observer-debug');
+        const results = document.getElementById('results');
+        
+        // ============================================
+        // 📡 PASO 1: CREAR OBSERVABLE
+        // ============================================
+        console.log('🚀 PASO 1: Creando Observable...');
+        
+        // ⭐ AQUÍ ESTÁ EL OBSERVABLE ⭐
+        const inputObservable = rxjs.fromEvent(input, 'input');
+        
+        // Debug: mostrar cuando el Observable emite
+        inputObservable.subscribe(event => {
+            const valor = event.target.value;
+            observableDebug.innerHTML = `✅ Observable emitió: "<strong>${valor}</strong>"`;
+            console.log('📡 Observable emitió:', valor);
+        });
+        
+        // ============================================
+        // 🔧 PASO 2: AGREGAR PIPES/OPERADORES
+        // ============================================
+        console.log('🚀 PASO 2: Agregando Pipes...');
+        
+        // ⭐ AQUÍ ESTÁN LAS PIPES ⭐
+        const searchStream = inputObservable.pipe(
+            // PIPE 1: Obtener solo el texto del input
+            rxjs.operators.map(event => {
+                const texto = event.target.value;
+                pipesDebug.innerHTML = `🔧 Pipe MAP: Extrajo texto "<strong>${texto}</strong>"`;
+                return texto;
+            }),
+            
+            // PIPE 2: Esperar 300ms después del último carácter
+            rxjs.operators.debounceTime(300),
+            rxjs.operators.tap(texto => {
+                pipesDebug.innerHTML += `<br>⏰ Pipe DEBOUNCE: Esperó 300ms, procesando "<strong>${texto}</strong>"`;
+            }),
+            
+            // PIPE 3: Solo procesar si hay al menos 2 caracteres
+            rxjs.operators.filter(texto => {
+                const esValido = texto.length >= 2;
+                if (esValido) {
+                    pipesDebug.innerHTML += `<br>✅ Pipe FILTER: Texto válido (${texto.length} chars)`;
+                } else {
+                    pipesDebug.innerHTML += `<br>❌ Pipe FILTER: Texto muy corto (${texto.length} chars)`;
+                    results.innerHTML = '<div class="no-results">💡 Escribe al menos 2 caracteres</div>';
+                }
+                return esValido;
+            }),
+            
+            // PIPE 4: Buscar sugerencias
+            rxjs.operators.map(texto => {
+                const sugerencias = buscarSugerencias(texto);
+                pipesDebug.innerHTML += `<br>🔍 Pipe BÚSQUEDA: Encontró ${sugerencias.length} sugerencias`;
+                return sugerencias;
+            })
+        );
+        
+        // ============================================
+        // 👁️ PASO 3: CREAR OBSERVER
+        // ============================================
+        console.log('🚀 PASO 3: Creando Observer...');
+        
+        // ⭐ AQUÍ ESTÁ EL OBSERVER ⭐
+        const observer = {
+            next: (sugerencias) => {
+                observerDebug.innerHTML = `👁️ Observer recibió ${sugerencias.length} sugerencias`;
+                console.log('👁️ Observer recibió:', sugerencias);
+                mostrarSugerencias(sugerencias);
+            },
+            error: (error) => {
+                observerDebug.innerHTML = `❌ Observer recibió error: ${error}`;
+                console.error('💥 Error:', error);
+            },
+            complete: () => {
+                observerDebug.innerHTML = `✅ Observer completado`;
+                console.log('🏁 Stream completado');
+            }
+        };
+        
+        // ============================================
+        // 🔗 PASO 4: CONECTAR TODO (SUSCRIPCIÓN)
+        // ============================================
+        console.log('🚀 PASO 4: Conectando Observable con Observer...');
+        
+        // ⭐ AQUÍ SE CONECTA TODO ⭐
+        const subscription = searchStream.subscribe(observer);
+        
+        console.log('✅ ¡Buscador reactivo listo!');
+        console.log('🔄 Flujo: Input → Observable → Pipes → Observer → UI');
+        
+        // ============================================
+        // 🔍 FUNCIONES AUXILIARES
+        // ============================================
+        
+        /**
+         * Busca sugerencias en los datos
+         */
+        function buscarSugerencias(texto) {
+            const textoMinuscula = texto.toLowerCase();
+            return datos.filter(item => 
+                item.toLowerCase().includes(textoMinuscula)
+            );
+        }
+        
+        /**
+         * Muestra las sugerencias en la interfaz
+         */
+        function mostrarSugerencias(sugerencias) {
+            if (sugerencias.length === 0) {
+                results.innerHTML = '<div class="no-results">🔍 No se encontraron resultados</div>';
+                return;
+            }
+            
+            const html = sugerencias
+                .map(sugerencia => `
+                    <div class="suggestion" onclick="seleccionar('${sugerencia}')">
+                        ${sugerencia}
+                    </div>
+                `)
+                .join('');
+            
+            results.innerHTML = html;
+        }
+        
+        /**
+         * Selecciona una sugerencia
+         */
+        function seleccionar(sugerencia) {
+            input.value = sugerencia;
+            alert(`✅ Seleccionaste: ${sugerencia}`);
+        }
+        
+        // ============================================
+        // 📋 RESUMEN FINAL
+        // ============================================
+        console.log('');
+        console.log('📚 RESUMEN DE CONCEPTOS:');
+        console.log('📡 Observable (línea 85): fromEvent(input, "input")');
+        console.log('🔧 Pipes (líneas 95-115): map, debounceTime, filter, map');
+        console.log('👁️ Observer (líneas 120-130): objeto con next, error, complete');
+        console.log('🔗 Suscripción (línea 135): searchStream.subscribe(observer)');
+        console.log('');
+        console.log('🔄 FLUJO DE DATOS:');
+        console.log('1. Usuario escribe → Observable emite evento');
+        console.log('2. Pipes transforman: evento → texto → filtrado → sugerencias');
+        console.log('3. Observer recibe sugerencias → actualiza interfaz');
+        console.log('');
+        console.log('¡Empieza a escribir para verlo en acción! 🚀');
+    </script>
+</body>
+</html>
